@@ -4,12 +4,16 @@ from django.utils.timezone import now
 
 
 class Post(models.Model):
-    sno=models.AutoField(primary_key=True)
-    title=models.CharField(max_length=255)
-    author=models.CharField(max_length=14)
-    slug=models.CharField(max_length=130)
-    timeStamp=models.DateTimeField(blank=True)
-    content=models.TextField()
+    sno = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, max_length=255)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)  
+    timestamp = models.DateTimeField(default=now)
+    content = models.TextField()
+    likes = models.ManyToManyField(User, related_name='blog_likes', blank=True)
+
+    def total_likes(self):
+        return self.likes.count()
 
 
     def __str__(self):

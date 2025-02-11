@@ -37,7 +37,7 @@ def search(request):
         allPosts=Post.objects.none()
     else:
         allPostsTitle= Post.objects.filter(title__icontains=query)
-        allPostsAuthor= Post.objects.filter(author__icontains=query)
+        allPostsAuthor= Post.objects.filter(author__username__icontains=query)
         allPostsContent =Post.objects.filter(content__icontains=query)
         allPosts=  allPostsTitle.union(allPostsContent, allPostsAuthor)
     if allPosts.count()==0:
