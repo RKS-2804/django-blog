@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %} Contact {% endblock title %}
+
+{% block contactactive %} active {% endblock contactactive %}
+
+{% block body %}
+
+<div class="container my-3">
+    <h3 my-5>Contact EchoThoughs Admin!</h3>
+    <form method="post" action="/contact">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Your Full Name</label>
+            <input type="name" class="form-control" id="name" name="name" aria-describedby="name">
+            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+        </div>
+        <div class="form-group">
+            <label for="email">Your Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" aria-describedby="email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="phone">Your Phone Number (with country code)</label>
+            <input type="phone" class="form-control" id="phone" name="phone" aria-describedby="phone">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your Phone Number with anyone
+                else.</small>
+        </div>
+        <div class="form-group">
+            <label for="content">Describe your queries:</label>
+            <!-- <input type="text" class="form-control" id="text"> -->
+            <textarea class="form-control" name="content" id="content" name="content" cols="30" rows="6"></textarea>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+
+</div>
+
+
+{% endblock body %}
