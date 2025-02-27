@@ -12,7 +12,7 @@ db.sqlite3
 .env
 
 # Virtual environment
-venv/
+denv/
 env/
 
 # VS Code settings
