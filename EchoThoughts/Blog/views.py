@@ -9,6 +9,9 @@ logger = logging.getLogger(__name__)
 
 # Home: Show all blog posts
 def blogHome(request): 
+    """
+    Home page of Blog.
+    """
     logger.info("Fetching all blog posts.")
     allPosts = Post.objects.all()
     context = {'allPosts': allPosts}
@@ -16,6 +19,9 @@ def blogHome(request):
 
 # Show a single blog post
 def blogPost(request, slug): 
+    """
+    ALl the blog post are handle by this.
+    """
     logger.info(f"Fetching blog post with slug: {slug}")
     post = get_object_or_404(Post, slug=slug)
     comments = BlogComment.objects.filter(post=post, parent=None)
@@ -33,12 +39,18 @@ def blogPost(request, slug):
 
 # Handle user comments
 def postComment(request):
+    """
+    Handles user comments and replies.
+    """
+    if not request.user.is_authenticated:
+        messages.error(request, "You must be logged in to comment.")
+        return redirect("login")  # Redirect to login page
+
     if request.method == "POST":
         logger.info("Processing new comment.")
-        comment_text = request.POST.get('comment', '').strip()
-        user = request.user
-        post_sno = request.POST.get('postSno')
-        parent_sno = request.POST.get('parentSno', '')
+        comment_text = request.POST.get("comment", "").strip()
+        post_sno = request.POST.get("postSno")
+        parent_sno = request.POST.get("parentSno", "")
 
         post = Post.objects.filter(sno=post_sno).first()
         if not post:
@@ -54,7 +66,7 @@ def postComment(request):
         if parent_sno:
             parent_comment = BlogComment.objects.filter(sno=parent_sno).first()
             if parent_comment:
-                comment = BlogComment(comment=comment_text, user=user, post=post, parent=parent_comment)
+                comment = BlogComment(comment=comment_text, user=request.user, post=post, parent=parent_comment)
                 logger.info(f"Reply added to comment ID: {parent_sno}")
                 messages.success(request, "Your reply has been posted successfully.")
             else:
@@ -62,7 +74,7 @@ def postComment(request):
                 messages.error(request, "Invalid parent comment.")
                 return redirect(f"/blog/{post.slug}")
         else:
-            comment = BlogComment(comment=comment_text, user=user, post=post)
+            comment = BlogComment(comment=comment_text, user=request.user, post=post)
             logger.info("New comment added.")
             messages.success(request, "Your comment has been posted successfully.")
 
@@ -73,6 +85,9 @@ def postComment(request):
 # Create a new post
 @login_required
 def createPost(request):
+    """
+    By this you can creat your blog post.
+    """
     if request.method == "POST":
         logger.info("Processing new post creation.")
         title = request.POST.get("title", "").strip()
@@ -100,6 +115,9 @@ def createPost(request):
 # Edit an existing post
 @login_required
 def editPost(request, post_sno):
+    """
+    gave functionality to edit your post.
+    """
     logger.info("Enter in edit function.")
     post = get_object_or_404(Post, sno=post_sno)
 
@@ -129,9 +147,9 @@ def editPost(request, post_sno):
 # Delete a post
 @login_required
 def deletePost(request, post_sno):
-    logger.info("11111111111111")
-
-    
+    """
+    By this you can delete the post.
+    """
     post = get_object_or_404(Post, sno=post_sno)
 
     if request.user != post.author:
@@ -145,6 +163,9 @@ def deletePost(request, post_sno):
     return redirect("blogHome")
 
 def deleteComment(request, comment_sno):
+    """
+    By this you can delete your commnets.
+    """
     comment = get_object_or_404(BlogComment, sno=comment_sno)  # Use sno instead of id
 
     if request.user != comment.user:
@@ -160,13 +181,18 @@ def deleteComment(request, comment_sno):
 
 @login_required
 def likePost(request, post_sno):
+    """
+    by this you can like and dislike the post.
+    """
     post = get_object_or_404(Post, sno=post_sno)
 
     if request.user in post.likes.all():
         post.likes.remove(request.user)
         messages.success(request, "You unliked this post.")
+        logger.info("Disliked sucessfully.")
     else:
         post.likes.add(request.user)
         messages.success(request, "You liked this post.")
+        logger.info("Liked sucessfully.")
 
     return redirect("blogPost", slug=post.slug)

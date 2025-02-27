@@ -5,3 +5,4 @@ dotenv
 asyncmy
 psycopg
 psycopg2
+pytest
