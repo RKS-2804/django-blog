@@ -1,8 +1,0 @@
-django
-os-sys
-ipykernel
-dotenv
-asyncmy
-psycopg
-psycopg2
-pytest
